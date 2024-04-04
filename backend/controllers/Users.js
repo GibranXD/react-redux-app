@@ -1,34 +1,34 @@
 import Users from "../models/UserModel.js";
 import argon2 from "argon2";
 
-export const getUser = async(req,res) => {
+export const getUser = async (req, res) => {
     try {
         const response = await Users.findAll({
-            attributes:['uuid','name','email','role']
+            attributes: ['uuid', 'name', 'email', 'role']
         });
         res.status(200).json(response);
     } catch (error) {
-        res.status(500).json({msg: error.message});
+        res.status(500).json({ msg: error.message });
     }
-    
+
 }
-export const getUserById = async(req,res) => {
+export const getUserById = async (req, res) => {
     try {
         const response = await Users.findOne({
-            attributes:['uuid','name','email','role'],
+            attributes: ['uuid', 'name', 'email', 'role'],
             where: {
                 uuid: req.params.id
             }
         });
         res.status(200).json(response);
     } catch (error) {
-        res.status(500).json({msg: error.message});
+        res.status(500).json({ msg: error.message });
     }
 
 }
-export const createUser = async(req,res) => {
-    const {name, email, password, confPassword, role} = req.body;
-    if(password !== confPassword) return res.status(400).json({msg: "Passowrd not match"});
+export const createUser = async (req, res) => {
+    const { name, email, password, confPassword, role } = req.body;
+    if (password !== confPassword) return res.status(400).json({ msg: "Password not match" });
     const hashPasword = await argon2.hash(password);
     try {
         await Users.create({
@@ -37,27 +37,27 @@ export const createUser = async(req,res) => {
             password: hashPasword,
             role: role
         });
-        res.status(201).json({msg: "Register success"});
+        res.status(201).json({ msg: "Register success" });
     } catch (error) {
-        res.status(400).json({msg: error.message})
+        res.status(400).json({ msg: error.message })
     }
 
 }
-export const updateUser = async(req,res) => {
+export const updateUser = async (req, res) => {
     const user = await Users.findOne({
         where: {
             uuid: req.params.id
         }
     });
-    if(!user) return res.status(404).json({msg: "User not found"});
-    const {name, email, password, confPassword, role} = req.body;
+    if (!user) return res.status(404).json({ msg: "User not found" });
+    const { name, email, password, confPassword, role } = req.body;
     let hashPasword;
-    if(password === "" || password === null){
+    if (password === "" || password === null) {
         hashPasword = user.password
-    }else{
+    } else {
         hashPasword = await argon2.hash(password);
     }
-    if(password !== confPassword) return res.status(400).json({msg: "Passowrd not match"});
+    if (password !== confPassword) return res.status(400).json({ msg: "Passowrd not match" });
     try {
         await Users.update({
             name: name,
@@ -65,32 +65,32 @@ export const updateUser = async(req,res) => {
             password: hashPasword,
             role: role
         }, {
-            where:{
+            where: {
                 id: user.id
             }
         });
-        res.status(200).json({msg: "User updated"});
+        res.status(200).json({ msg: "User updated" });
     } catch (error) {
-        res.status(400).json({msg: error.message})
+        res.status(400).json({ msg: error.message })
     }
 
 }
-export const deleteUser = async(req,res) => {
+export const deleteUser = async (req, res) => {
     const user = await Users.findOne({
         where: {
             uuid: req.params.id
         }
     });
-    if(!user) return res.status(400).json({msg: "User not found"});
+    if (!user) return res.status(400).json({ msg: "User not found" });
     try {
         await Users.destroy({
-            where:{
+            where: {
                 id: user.id
             }
         });
-        res.status(200).json({msg: "User deleted"});
+        res.status(200).json({ msg: "User deleted" });
     } catch (error) {
-        res.status(400).json({msg: error.message})
+        res.status(400).json({ msg: error.message })
     }
 
 

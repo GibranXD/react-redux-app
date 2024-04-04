@@ -20,7 +20,7 @@ GET http://localhost:5000/users
 ###
 
 // Get Single User
-GET http://localhost:5000/users/4bdefe51-bca1-49f1-bb25-8b30fdbf872d
+GET http://localhost:5000/users/82bd7070-e00a-4242-b9f0-e9a907f99f47
 
 ###
 
